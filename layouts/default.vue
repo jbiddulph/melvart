@@ -79,14 +79,15 @@ watchEffect(() => {
   if (user.value) {
     links.value = [
       // { text: 'Home', href: '/' },
-      { text: 'Map', href: '/map' },
-      { text: 'Items', href: '/auth/profile' },
+      // { text: 'Map', href: '/map' },
+      { text: 'Gallery', href: '/gallery' },
       { text: 'Add Item', href: '/items/create' },
     ];
   } else {
     links.value = [
       // { text: 'Home', href: '/' },
-      { text: 'Map', href: '/map' },
+      // { text: 'Map', href: '/map' },
+      { text: 'Gallery', href: '/gallery' },
       { text: 'Login', href: '/auth/login' },
       { text: 'Register', href: '/auth/register' },
     ];

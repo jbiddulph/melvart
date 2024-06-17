@@ -26,3 +26,18 @@ model Items {
   reported_at     String
   user_id         String
 }
+
+
+model Galleries {
+  id              Int      @id @default(autoincrement())
+  title           String?
+  size            String?
+  category        String?
+  file            String?
+  artistNotes     String?
+  price           Int?
+  isfeatured      Int           @default(0)
+  islive          Int           @default(1)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @default(now())
+}
