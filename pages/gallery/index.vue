@@ -6,15 +6,15 @@
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
     <div ref="grid" class="grid">
-      <div v-for="item in galleries" :key="item.id" class="grid-item bg-white m-4 md:m-0 border border-slate-300 p-4 flex flex-col">
+      <div v-for="item in galleries" :key="item.id" class="grid-item bg-white m-4 md:m-0 border border-slate-300 rounded-lg p-4 flex flex-col">
         <img
           :src="`${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`"
           :alt="item.title"
-          class="cursor-pointer m-0 w-full"
+          class="cursor-pointer m-0 pr-2 w-full"
           @load="imageLoaded"
           @click="openModal(item)"
         />
-        <div class="mt-2"><span class="mr-2 text-xs">({{item.id}})</span>{{item.title}}</div>
+        <div class="mt-2">{{item.title}}</div>
         <div>{{item.item_status}}</div>
         <div>{{item.item_type}}</div>
       </div>
@@ -34,19 +34,19 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import Masonry from 'masonry-layout';
 
 useHead({
   title: "Items page"
 })
+
 const config = useRuntimeConfig();
 const galleries = ref([]);
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const router = useRouter();
 const showModal = ref(false);
-const selectedImageSrc = ref("");
 const selectedItem = ref(null);
+const selectedImageSrc = ref("");
 const totalGalleries = ref(0);
 const totalPages = ref(1);
 const currentPage = ref(1);
@@ -67,8 +67,8 @@ const getGalleries = async (page = 1, limit = 30) => {
 
 const openModal = (item: any) => {
   selectedImageSrc.value = `${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`;
-  selectedItem.value = item;
   showModal.value = true;
+  selectedItem.value = item;
 }
 
 const fetchItems = async (page = 1) => {
@@ -77,10 +77,13 @@ const fetchItems = async (page = 1) => {
   totalGalleries.value = fetchedTotalGalleries;
   totalPages.value = fetchedTotalPages;
   currentPage.value = fetchedCurrentPage;
-  initializeMasonry();
+  if (typeof window !== 'undefined') {
+    initializeMasonry();
+  }
 };
 
-const initializeMasonry = () => {
+const initializeMasonry = async () => {
+  const Masonry = (await import('masonry-layout')).default;
   msnry = new Masonry(grid.value, {
     itemSelector: '.grid-item',
     columnWidth: '.grid-item',
@@ -89,8 +92,10 @@ const initializeMasonry = () => {
 };
 
 const imageLoaded = () => {
-  msnry.reloadItems();
-  msnry.layout();
+  if (msnry) {
+    msnry.reloadItems();
+    msnry.layout();
+  }
 };
 
 const nextPage = () => {
@@ -110,7 +115,9 @@ onMounted(() => {
 });
 
 watch(galleries, () => {
-  initializeMasonry();
+  if (typeof window !== 'undefined') {
+    initializeMasonry();
+  }
 });
 
 const deleteItem = async (id: string, image: string) => {
