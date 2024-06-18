@@ -6,11 +6,11 @@
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
     <div ref="grid" class="grid">
-      <div v-for="item in galleries" :key="item.id" class="grid-item bg-white m-4 md:m-0 border border-slate-300 rounded-lg p-4 flex flex-col">
+      <div v-for="item in galleries" :key="item.id" class="grid-item bg-white m-4 md:m-0 border md:border-slate-300 p-4 flex flex-col">
         <img
           :src="`${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`"
           :alt="item.title"
-          class="cursor-pointer m-0 pr-2 w-full"
+          class="cursor-pointer m-0 w-full"
           @load="imageLoaded"
           @click="openModal(item)"
         />
