@@ -8,8 +8,10 @@
       <div class="container mx-auto flex justify-between items-center p-4 flex-col md:flex-row">
         <div class="flex flex-row justify-between w-full">
           <div class="flex items-center">
-            <img src="/public/signature.png" alt="Melvyn Biddulph" width="360" height="53" class="mr-4" />
-            <h1 class="sr-only">Melvyn Biddulph</h1>
+            <NuxtLink href="/">
+              <img src="/public/signature.png" alt="Melvyn Biddulph" width="360" height="53" class="mr-4" />
+              <h1 class="sr-only">Melvyn Biddulph</h1>
+            </NuxtLink>
           </div>
           <button @click="toggleMenu" class="block md:hidden">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -20,7 +22,7 @@
         <nav>
           <ul :class="{'block': isMenuOpen, 'hidden': !isMenuOpen}" class="md:flex md:items-center md:space-x-4 mt-4 md:mt-0 w-full">
             <li v-for="link in links" :key="link.text" class="flex-none mb-6 md:mb-0">
-              <NuxtLink :href="link.href" :class="['block py-2 px-4 rounded', { 'bg-gray-700': isActive(link.href) }]" @click="closeMenuOnLinkClick">
+              <NuxtLink :href="link.href" :class="['block py-2 px-4 rounded bg-gray-500', { 'bg-gray-700': isActive(link.href) }]" @click="closeMenuOnLinkClick">
                 {{ link.text }}
               </NuxtLink>
             </li>
@@ -88,8 +90,8 @@ watchEffect(() => {
       // { text: 'Home', href: '/' },
       // { text: 'Map', href: '/map' },
       { text: 'Gallery', href: '/gallery' },
-      { text: 'Login', href: '/auth/login' },
-      { text: 'Register', href: '/auth/register' },
+      // { text: 'Login', href: '/auth/login' },
+      // { text: 'Register', href: '/auth/register' },
     ];
   }
 });

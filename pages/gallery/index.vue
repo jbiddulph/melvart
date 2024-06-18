@@ -1,50 +1,41 @@
 <template>
   <div class="container mx-auto">
-    <h1 class="text-4xl py-10 px-4">My Items</h1>
-    <!-- <p>{{user.id}}</p>
-    <p>{{user.email}}</p> -->
-    <!-- <h2>Items</h2> -->
+    <h1 class="text-4xl py-10 px-4">The Gallery</h1>
     <div v-if="totalPages > 1" class="flex mx-auto w-100 justify-center mb-10">
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="prevPage" :disabled="currentPage === 1">Prev</button>
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
-    <ul class="flex flex-row w-full flex-wrap gap-0 md:gap-6 justify-evenly">
-      <li v-for="item in galleries" :key="item.id" class="bg-white m-4 md:m-0 border border-slate-300 rounded-lg md:w-[182px] w-full p-4 flex flex-col">
-       <!-- <img :src="`${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`" :alt="item.title" class="m-0 pr-2 h-auto md:h-32"> -->
+    <div ref="grid" class="grid">
+      <div v-for="item in galleries" :key="item.id" class="grid-item bg-white m-4 md:m-0 border border-slate-300 p-4 flex flex-col">
         <img
           :src="`${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`"
           :alt="item.title"
-          class="cursor-pointer m-0 pr-2 h-auto md:h-32"
+          class="cursor-pointer m-0 w-full"
+          @load="imageLoaded"
           @click="openModal(item)"
         />
-
-        <!-- {{item.id}} -->
-        {{item.title}}
-        {{item.item_status}}
-        {{item.item_type}}
-        <!-- <div class="flex flex-row mr-2">
-          <NuxtLink :href="`/items/update?id=${item.id}&user_id=${item.user_id}`" class="bg-amber-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2">
-            <span>Edit</span>
-          </NuxtLink>
-          <button @click="deleteItem(item.id, item.item_pic)" class="bg-red-600 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2">
-            <span>Delete</span>
-          </button>
-        </div> -->
-      </li>
-    </ul>
-    <div v-if="totalPages > 1" class="flex mx-auto w-100 justify-center mt-10">
+        <div class="mt-2"><span class="mr-2 text-xs">({{item.id}})</span>{{item.title}}</div>
+        <div>{{item.item_status}}</div>
+        <div>{{item.item_type}}</div>
+      </div>
+    </div>
+    <div v-if="totalPages > 1" class="flex mx-auto w-100 justify-center mt-10 mb-10">
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="prevPage" :disabled="currentPage === 1">Prev</button>
       <button class="bg-green-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
     <Modal
       :isVisible="showModal"
       :imageSrc="selectedImageSrc"
+      :data="selectedItem"
       @close="showModal = false"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue';
+import Masonry from 'masonry-layout';
+
 useHead({
   title: "Items page"
 })
@@ -55,10 +46,13 @@ const client = useSupabaseClient();
 const router = useRouter();
 const showModal = ref(false);
 const selectedImageSrc = ref("");
+const selectedItem = ref(null);
 const totalGalleries = ref(0);
 const totalPages = ref(1);
 const currentPage = ref(1);
 const limit = ref(30);
+const grid = ref(null);
+let msnry;
 
 const getGalleries = async (page = 1, limit = 30) => {
   const response = await $fetch(`/api/galleries/`, {
@@ -72,19 +66,31 @@ const getGalleries = async (page = 1, limit = 30) => {
 };
 
 const openModal = (item: any) => {
-      selectedImageSrc.value = `${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`;
-      showModal.value = true;
-    }
+  selectedImageSrc.value = `${config.public.supabase.url}/storage/v1/object/public/images/public/gallery/${item.file ? (item.file.toLowerCase().endsWith('.jpg') ? item.file : item.file + '.jpg') : 'public/images/public/items/default.jpg'}`;
+  selectedItem.value = item;
+  showModal.value = true;
+}
+
 const fetchItems = async (page = 1) => {
   const { galleries: fetchedGalleries, totalGalleries: fetchedTotalGalleries, totalPages: fetchedTotalPages, currentPage: fetchedCurrentPage } = await getGalleries(page, limit.value);
   galleries.value = fetchedGalleries;
   totalGalleries.value = fetchedTotalGalleries;
   totalPages.value = fetchedTotalPages;
   currentPage.value = fetchedCurrentPage;
-  console.log("galleries: ", galleries.value);
-  console.log("total Items: ", totalGalleries.value);
-  console.log("total Pages: ", totalPages.value);
-  console.log("current page: ", currentPage.value);
+  initializeMasonry();
+};
+
+const initializeMasonry = () => {
+  msnry = new Masonry(grid.value, {
+    itemSelector: '.grid-item',
+    columnWidth: '.grid-item',
+    percentPosition: true
+  });
+};
+
+const imageLoaded = () => {
+  msnry.reloadItems();
+  msnry.layout();
 };
 
 const nextPage = () => {
@@ -101,6 +107,10 @@ const prevPage = () => {
 
 onMounted(() => {
   fetchItems(currentPage.value);
+});
+
+watch(galleries, () => {
+  initializeMasonry();
 });
 
 const deleteItem = async (id: string, image: string) => {
@@ -127,5 +137,27 @@ const deleteItem = async (id: string, image: string) => {
 </script>
 
 <style scoped>
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -10px;
+}
 
+.grid-item {
+  margin: 10px;
+  width: calc(33.333% - 20px); /* Adjust this percentage based on your desired column count */
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .grid-item {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-item {
+    width: calc(100% - 20px);
+  }
+}
 </style>
