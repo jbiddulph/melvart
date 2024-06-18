@@ -35,6 +35,7 @@
         <p class="mb-6">After my solo exhibition in 2018 I thought my freedom would be compromised. It hasn't, I still follow my basic approach of never producing art for anyone but myself.</p>
       </div>
       <div class="w-full md:w-1/2">
+        <p class="text-lg mb-6 font-bold">If you have any enquiries regarding a piece of art, please contact John on: 07935 085 736 quoting the ID you are interested in.</p>
         <h3 class="text-2xl mb-4">The interview</h3>
         <div class="aspect-w-16 aspect-h-9 video-wrapper">
         <iframe class="w-full h-full video-iframe" src="https://www.youtube.com/embed/IwLl3q98hUs?si=D3-1VecdaLiNDXD4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
