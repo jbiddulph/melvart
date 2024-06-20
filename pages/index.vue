@@ -68,7 +68,7 @@ useHead({
 })
 
 const config = useRuntimeConfig();
-const delias = ref([]);
+const galleries = ref([]);
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const router = useRouter();
@@ -83,7 +83,7 @@ const grid = ref(null);
 let msnry;
 
 const getGalleries = async (page = 1, limit = 30) => {
-  const response = await $fetch(`/api/delias/`, {
+  const response = await $fetch(`/api/galleries/`, {
     params: {
       page,
       limit,
@@ -100,8 +100,8 @@ const openModal = (item: any) => {
 }
 
 const fetchItems = async (page = 1) => {
-  const { delias: fetchedGalleries, totalGalleries: fetchedTotalGalleries, totalPages: fetchedTotalPages, currentPage: fetchedCurrentPage } = await getGalleries(page, limit.value);
-  delias.value = fetchedGalleries;
+  const { galleries: fetchedGalleries, totalGalleries: fetchedTotalGalleries, totalPages: fetchedTotalPages, currentPage: fetchedCurrentPage } = await getGalleries(page, limit.value);
+  galleries.value = fetchedGalleries;
   totalGalleries.value = fetchedTotalGalleries;
   totalPages.value = fetchedTotalPages;
   currentPage.value = fetchedCurrentPage;
@@ -142,7 +142,7 @@ onMounted(() => {
   fetchItems(currentPage.value);
 });
 
-watch(delias, () => {
+watch(galleries, () => {
   if (typeof window !== 'undefined') {
     initializeMasonry();
   }

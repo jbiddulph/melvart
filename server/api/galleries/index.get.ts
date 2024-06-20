@@ -8,18 +8,18 @@ export default defineEventHandler(async (event) => {
   const limit = parseInt(query.limit) || 15;
   const skip = (page - 1) * limit;
 
-  const [delias, totalDelias] = await Promise.all([
-    prisma.delias.findMany({
+  const [galleries, totalGalleries] = await Promise.all([
+    prisma.galleries.findMany({
       skip: skip,
       take: limit,
     }),
-    prisma.delias.count(),
+    prisma.galleries.count(),
   ]);
 
   return {
-    delias,
-    totalDelias,
-    totalPages: Math.ceil(totalDelias / limit),
+    galleries,
+    totalGalleries,
+    totalPages: Math.ceil(totalGalleries / limit),
     currentPage: page,
   };
 });
