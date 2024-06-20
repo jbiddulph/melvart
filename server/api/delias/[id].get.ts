@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const id = params.id;
   console.log("item: ", id);
 
-  return prisma.galleries.findUnique({
+  return prisma.delias.findUnique({
     where: {
       id: Number(id) // Assuming id is a number, convert it accordingly
     }
