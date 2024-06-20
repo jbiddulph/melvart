@@ -9,7 +9,7 @@
       <li>SOLO EXHIBITION 2018 - BACK FROM THE DEAD</li>
     </ul>
     <div class="flex md:flex-row flex-col">
-      <div class="w-full md:w-1/2 mr-8">
+      <div class="w-full md:w-1/2 mr-8 mb-8">
         <p class="mb-6">I think I must have been about 12 when the new art teacher joined the school.</p>
 
         <p class="mb-6">Miss Wiggins' hair was blonde, in a beehive style. She wore short micro skirts, sometimes with tassels. She would arrive at the school on her cobalt blue Vespa in hairnet and rollers. I think she was the best thing to ever happen to me. She told me I could draw. Got me to go to Saturday morning classes and encouraged me to join the Rochdale College of Art when I left School just before my 15th birthday. She had then, apparently, saved me from a life working in some factory.</p>
